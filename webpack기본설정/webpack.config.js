@@ -1,4 +1,5 @@
 const path = require('path');
+const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
   name: 'word-relay-setting', // 설정 이름
@@ -14,17 +15,37 @@ module.exports = {
 
   module: {
     rules: [{
-      test: /\.jsx?/, // js파일과 jsx파일들을 룰 적용하겠다는 뜻
+      test: /\.jsx?$/, // js파일과 jsx파일들을 룰 적용하겠다는 뜻
       loader: 'babel-loader',
       options: {
-        presets: ['@babel/preset-env', '@babel/preset-react'],
-        plugins: ['@babel/plugin-proposal-class-properties'],
+        presets: [
+          ['@babel/preset-env', {
+            targets: {
+              browsers: ['> 1% in KR'], //browserslist
+            },
+            debug: true,
+        }],
+        '@babel/preset-react'
+        ],
+        plugins: [
+          '@babel/plugin-proposal-class-properties',
+          'react-refresh/babel'
+        ],
       },
     }],
   },
 
+  plugins: [
+    new RefreshWebpackPlugin()
+  ],
+
   output: {
     path: path.join(__dirname, 'dist'), //dist 폴더 경로 (현재폴더안의 dist)
-    filename: 'app.js'
+    filename: 'app.js',
+    publicPath: '/dist/',
   }, // 출력
+  devServer: {
+    publicPath: '/dist/',
+    hot: true
+  },
 };
